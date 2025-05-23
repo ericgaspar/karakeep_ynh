@@ -13,6 +13,7 @@ source /usr/share/yunohost/helpers
 ynh_script_progression "Installing dependencies..."
 
 ynh_nodejs_install
+ynh_hide_warnings corepack enable && corepack prepare pnpm@latest --activate
 
 #=================================================
 # INITIALIZE AND STORE SETTINGS
@@ -20,11 +21,6 @@ ynh_nodejs_install
 
 release=$(curl -s https://api.github.com/repos/karakeep-app/karakeep/releases/latest | grep "tag_name" | awk '{print substr($2, 3, length($2)-4) }')
 secret==$(ynh_string_random --length=36)
-
-# If you need to, you can define custom settings
-# (or remove this section entirely if not relevant for you)
-#foo="bar"
-#ynh_app_setting_set --key=foo --value=$foo
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
@@ -78,9 +74,9 @@ yunohost service add "$app-browser" --description="Bookmark-everything app" --lo
 #=================================================
 ynh_script_progression "Installing the app..."
 
-pushd "$install_dir"
-	ynh_hide_warnings npm install -g corepack@0.31.0
-popd
+#pushd "$install_dir"
+#	ynh_hide_warnings npm install -g corepack@0.31.0
+#popd
 
 pushd "$install_dir/apps/web"
 	#corepack enable
