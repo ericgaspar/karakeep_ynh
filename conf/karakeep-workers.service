@@ -1,7 +1,7 @@
 [Unit]
 Description=Karakeep workers
-Wants=network.target __APP__-browser.service meilisearch.service
-After=network.target __APP__-browser.service meilisearch.service
+Wants=network.target __APP__-browser.service 
+After=network.target __APP__-browser.service 
 
 [Service]
 User=__APP__
