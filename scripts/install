@@ -79,7 +79,6 @@ ynh_script_progression "Installing the app..."
 #popd
 
 pushd "$install_dir/apps/web"
-	#corepack enable
 	export NEXT_TELEMETRY_DISABLED=1
 	export PUPPETEER_SKIP_DOWNLOAD="true"
 	export CI="true"
