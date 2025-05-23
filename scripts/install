@@ -104,28 +104,6 @@ pushd "$install_dir/packages/db"
   	ynh_hide_warnings pnpm migrate
 popd
 
-# pushd "$install_dir/apps/web"
-# 	#corepack enable
-# 	export NEXT_TELEMETRY_DISABLED=1
-# 	export PUPPETEER_SKIP_DOWNLOAD="true"
-# 	export CI="true"
-#   	ynh_hide_warnings ynh_exec_as_app pnpm install --frozen-lockfile
-#   	ynh_hide_warnings ynh_exec_as_app pnpm build
-# popd
-
-# pushd "$install_dir/apps/workers"
-#   	ynh_hide_warnings ynh_exec_as_app pnpm install --frozen-lockfile
-# popd
-
-# pushd "$install_dir/apps/cli"
-#   	ynh_hide_warnings ynh_exec_as_app pnpm install --frozen-lockfile
-#   	ynh_hide_warnings ynh_exec_as_app pnpm build
-# popd
-
-# pushd "$install_dir/packages/db"
-#   	ynh_hide_warnings ynh_exec_as_app pnpm migrate
-# popd
-
 #=================================================
 # START SYSTEMD SERVICE
 #=================================================
