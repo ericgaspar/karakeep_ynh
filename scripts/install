@@ -18,6 +18,8 @@ ynh_nodejs_install
 # INITIALIZE AND STORE SETTINGS
 #=================================================
 
+release=$(curl -s https://api.github.com/repos/karakeep-app/karakeep/releases/latest | grep "tag_name" | awk '{print substr($2, 3, length($2)-4) }')
+
 # If you need to, you can define custom settings
 # (or remove this section entirely if not relevant for you)
 foo="bar"
@@ -30,6 +32,9 @@ ynh_script_progression "Setting up source files..."
 
 # Download, check integrity, uncompress and patch the source from manifest.toml
 ynh_setup_source --dest_dir="$install_dir"
+
+ynh_setup_source --dest_dir="/usr/bin/" --source="dlp"
+chmod +x "/usr/bin/yt-dlp"
 
 #=================================================
 # APP INITIAL CONFIGURATION
@@ -49,7 +54,12 @@ ynh_config_add_nginx
 # Create a dedicated systemd config
 ynh_config_add_systemd
 
-yunohost service add "$app" --description="A short description of the app" --log="/var/log/$app/$app.log"
+yunohost service add "$app-workers" --description="Bookmark-everything app" --log="/var/log/$app/$app-workers.log"
+yunohost service add "$app-web" --description="Bookmark-everything app" --log="/var/log/$app/$app-web.log"
+
+yunohost service add "$app" --description="Bookmark-everything app" --log="/var/log/$app/$app.log"
+yunohost service add "$app" --description="Bookmark-everything app" --log="/var/log/$app/$app.log"
+yunohost service add "$app" --description="Bookmark-everything app" --log="/var/log/$app/$app.log"
 
 # Use logrotate to manage application logfile(s)
 ynh_config_add_logrotate
@@ -58,14 +68,45 @@ ynh_config_add_logrotate
 ynh_config_add_fail2ban --logpath="/var/log/nginx/${domain}-error.log" --failregex="Regex to match into the log for a failed login"
 
 #=================================================
+# INSTALL KARAKEEP
+#=================================================
+ynh_script_progression "Installing the app..."
+
+pushd "$install_dir"
+	npm install -g corepack@0.31.0
+ 	ynh_hide_warnings ynh_exec_as_app npm install
+popd
+
+pushd "$install_dir/apps/web"
+	corepack enable
+	export NEXT_TELEMETRY_DISABLED=1
+	export PUPPETEER_SKIP_DOWNLOAD="true"
+	export CI="true"
+  	ynh_hide_warnings ynh_exec_as_app pnpm install --frozen-lockfile
+  	ynh_hide_warnings ynh_exec_as_app pnpm build
+popd
+
+pushd "$install_dir/apps/workers"
+  	ynh_hide_warnings ynh_exec_as_app pnpm install --frozen-lockfile
+popd
+
+pushd "$install_dir/apps/cli"
+  	ynh_hide_warnings ynh_exec_as_app pnpm install --frozen-lockfile
+  	ynh_hide_warnings ynh_exec_as_app pnpm build
+popd
+
+pushd "$install_dir/packages/db"
+  	ynh_hide_warnings ynh_exec_as_app pnpm migrate
+popd
+
+#=================================================
 # START SYSTEMD SERVICE
 #=================================================
 ynh_script_progression "Starting $app's systemd service..."
 
 # Start a systemd service
-ynh_systemctl --service="$app" --action="start"
-
-karakeep-workers karakeep-web
+ynh_systemctl --service="$app-workers" --action="start"
+ynh_systemctl --service="$app-web" --action="start"
 
 #=================================================
 # END OF SCRIPT

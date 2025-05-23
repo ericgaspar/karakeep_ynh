@@ -70,6 +70,14 @@ ram.runtime = "50M"
     url = "https://github.com/karakeep-app/karakeep/archive/refs/tags/v0.24.1.tar.gz"
     sha256 = "c252df5a9d8e31d0fa805bef08f7654f13f6d76b590afc8f459ef7380f1862a0"
 
+    [resources.sources.dlp]
+    url = "https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp_linux"
+    sha256 = "da18d12e96f56f942706eeae19898edb86fe1880785286d49e66d69e7b55c005"
+    insubdir = false
+    extract = false
+    rename = "yt-dlp"
+
+
     # autoupdate.strategy = "latest_github_tag"
 
     [resources.system_user]
@@ -82,13 +90,6 @@ ram.runtime = "50M"
     main.url = "/"
 
     [resources.ports]
-    # This will pick a random port for reverse-proxying and store it as the $port setting
 
     [resources.apt]
-    # This will automatically install/uninstall the following apt packages
-    # and implicitly define the $phpversion setting as 8.0 (if phpX.Y-foobar dependencies are listed)
-    packages = "mariadb-server, deb1, deb2, php8.3-foo, php8.3-bar"
-
-    [resources.database]
-    # This will automatically provision/deprovison a MySQL DB and store the corresponding credentials in settings $db_user, $db_name, $db_pwd
-    type = "mysql"
+    packages = "graphicsmagick, ghostscript, build-essential, software-properties-common, chromium"
