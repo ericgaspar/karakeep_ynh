@@ -79,7 +79,7 @@ yunohost service add "$app-browser" --description="Bookmark-everything app" --lo
 ynh_script_progression "Installing the app..."
 
 pushd "$install_dir"
-	ynh_hide_warnings ynh_exec_as_app npm install -g corepack@0.31.0
+	ynh_hide_warnings npm install -g corepack@0.31.0
 popd
 
 pushd "$install_dir/apps/web"
