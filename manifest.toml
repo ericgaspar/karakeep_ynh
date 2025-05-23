@@ -3,7 +3,7 @@
 packaging_format = 2
 
 id = "karakeep"
-name = "karakeep"
+name = "Karakeep"
 description.en = "Bookmark-everything app (links, notes and images)"
 description.fr = "Expliquez en *quelques* (10~15) mots l'utilité de l'app ou ce qu'elle fait (l'objectif est de donner une idée grossière pour des utilisateurs qui naviguent dans un catalogue de 100+ apps)"
 
@@ -16,7 +16,6 @@ license = "AGPL-3.0"
 website = "https://karakeep.app/"
 demo = "https://try.karakeep.app/signin"
 admindoc = "https://docs.karakeep.app/Installation/debuntu"
-userdoc = "https://yunohost.org/apps"
 code = "https://github.com/karakeep-app/karakeep"
 
 [integration]
@@ -37,30 +36,9 @@ ram.runtime = "50M"
     [install.domain]
     type = "domain"
 
-    [install.path]
-    # this is a generic question - ask strings are automatically handled by YunoHost's core
-    type = "path"
-    default = "/example"
-
     [install.init_main_permission]
     type = "group"
     default = "visitors"
-
-    [install.language]
-    ask.en = "Choose the application language"
-    ask.fr = "Choisissez la langue de l'application"
-    type = "select"
-    choices = ["fr", "en"]
-    default = "fr"
-
-    [install.admin]
-    type = "user"
-
-    [install.password]
-
-    help.en = "Use the help field to add an information for the admin about this question."
-    help.fr = "Utilisez le champ aide pour ajouter une information à l'intention de l'administrateur à propos de cette question."
-    type = "password"
 
 [resources]
 
@@ -77,9 +55,6 @@ ram.runtime = "50M"
     extract = false
     rename = "yt-dlp"
 
-
-    # autoupdate.strategy = "latest_github_tag"
-
     [resources.system_user]
 
     [resources.install_dir]
@@ -90,6 +65,8 @@ ram.runtime = "50M"
     main.url = "/"
 
     [resources.ports]
+    meili.default = 7700
+    browser.default = 9222
 
     [resources.apt]
     packages = "graphicsmagick, ghostscript, build-essential, software-properties-common, chromium"

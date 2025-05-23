@@ -19,6 +19,7 @@ ynh_nodejs_install
 #=================================================
 
 release=$(curl -s https://api.github.com/repos/karakeep-app/karakeep/releases/latest | grep "tag_name" | awk '{print substr($2, 3, length($2)-4) }')
+secret==$(ynh_string_random --length=36)
 
 # If you need to, you can define custom settings
 # (or remove this section entirely if not relevant for you)
@@ -43,6 +44,9 @@ ynh_script_progression "Adding $app's configuration files..."
 
 ynh_config_add --template=".env" --destination="$install_dir/karakeep.env"
 
+chmod 600 "$install_dir/karakeep.env"
+chown "$app:$app" "$install_dir/karakeep.env"
+
 #=================================================
 # SYSTEM CONFIGURATION
 #=================================================
@@ -52,20 +56,22 @@ ynh_script_progression "Adding system configurations related to $app..."
 ynh_config_add_nginx
 
 # Create a dedicated systemd config
-ynh_config_add_systemd
+ynh_config_add_systemd --service="$app-browser" --template="karakeep-browser"
+ynh_config_add_systemd --service="$app-web" --template=="karakeep-web"
+ynh_config_add_systemd --service="$app-workers" --template=="karakeep-workers"
+#ynh_config_add_systemd --service="meilisearch" --template=="meilisearch"
 
 yunohost service add "$app-workers" --description="Bookmark-everything app" --log="/var/log/$app/$app-workers.log"
 yunohost service add "$app-web" --description="Bookmark-everything app" --log="/var/log/$app/$app-web.log"
+yunohost service add "$app-browser" --description="Bookmark-everything app" --log="/var/log/$app/$app.log"
 
-yunohost service add "$app" --description="Bookmark-everything app" --log="/var/log/$app/$app.log"
-yunohost service add "$app" --description="Bookmark-everything app" --log="/var/log/$app/$app.log"
-yunohost service add "$app" --description="Bookmark-everything app" --log="/var/log/$app/$app.log"
+#yunohost service add "meilisearch" --description="Bookmark-everything app" --log="/var/log/$app/$app.log"
 
 # Use logrotate to manage application logfile(s)
-ynh_config_add_logrotate
+#ynh_config_add_logrotate
 
 # Create a dedicated Fail2Ban config
-ynh_config_add_fail2ban --logpath="/var/log/nginx/${domain}-error.log" --failregex="Regex to match into the log for a failed login"
+#ynh_config_add_fail2ban --logpath="/var/log/nginx/${domain}-error.log" --failregex="Regex to match into the log for a failed login"
 
 #=================================================
 # INSTALL KARAKEEP
@@ -73,8 +79,7 @@ ynh_config_add_fail2ban --logpath="/var/log/nginx/${domain}-error.log" --failreg
 ynh_script_progression "Installing the app..."
 
 pushd "$install_dir"
-	npm install -g corepack@0.31.0
- 	ynh_hide_warnings ynh_exec_as_app npm install
+	ynh_hide_warnings ynh_exec_as_app npm install -g corepack@0.31.0
 popd
 
 pushd "$install_dir/apps/web"
